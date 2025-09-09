@@ -1,19 +1,26 @@
-import { Package, Bell, User, Search } from "lucide-react";
+import { Package, Bell, User, Search, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface HeaderProps {
   userRole?: 'admin' | 'driver' | 'customer';
   userName?: string;
+  onBack?: () => void;
+  showBackButton?: boolean;
 }
 
-export const Header = ({ userRole = 'admin', userName = 'Usuario' }: HeaderProps) => {
+export const Header = ({ userRole = 'admin', userName = 'Usuario', onBack, showBackButton = false }: HeaderProps) => {
   return (
     <header className="border-b bg-card shadow-card">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          {/* Logo and Brand */}
+          {/* Back Button and Logo */}
           <div className="flex items-center space-x-3">
+            {showBackButton && onBack && (
+              <Button variant="ghost" size="icon" onClick={onBack}>
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            )}
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-lg">
               <Package className="h-6 w-6 text-primary-foreground" />
             </div>

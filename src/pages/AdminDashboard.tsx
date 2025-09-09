@@ -7,7 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export const AdminDashboard = () => {
+interface AdminDashboardProps {
+  onBack?: () => void;
+}
+
+export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -60,7 +64,7 @@ export const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header userRole="admin" userName="Administrador" />
+      <Header userRole="admin" userName="Administrador" onBack={onBack} showBackButton={!!onBack} />
       
       <main className="container mx-auto px-4 py-6">
         {/* Stats Section */}

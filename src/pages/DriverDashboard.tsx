@@ -6,7 +6,11 @@ import { PackageCard } from "@/components/dashboard/PackageCard";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 
-export const DriverDashboard = () => {
+interface DriverDashboardProps {
+  onBack?: () => void;
+}
+
+export const DriverDashboard = ({ onBack }: DriverDashboardProps) => {
   const [packages, setPackages] = useState([
     {
       id: "1",
@@ -79,7 +83,7 @@ export const DriverDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header userRole="driver" userName="Carlos López" />
+      <Header userRole="driver" userName="Carlos López" onBack={onBack} showBackButton={!!onBack} />
       
       <main className="container mx-auto px-4 py-6">
         {/* Stats Section */}

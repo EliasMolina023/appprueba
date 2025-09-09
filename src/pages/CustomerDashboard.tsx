@@ -7,7 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
 
-export const CustomerDashboard = () => {
+interface CustomerDashboardProps {
+  onBack?: () => void;
+}
+
+export const CustomerDashboard = ({ onBack }: CustomerDashboardProps) => {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [searchResult, setSearchResult] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -84,7 +88,7 @@ export const CustomerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header userRole="customer" userName="Cliente" />
+      <Header userRole="customer" userName="Cliente" onBack={onBack} showBackButton={!!onBack} />
       
       <main className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Search Section */}

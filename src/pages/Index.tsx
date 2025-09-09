@@ -16,15 +16,15 @@ const Index = () => {
   };
 
   if (currentRole === 'admin') {
-    return <AdminDashboard />;
+    return <AdminDashboard onBack={handleBackToLanding} />;
   }
   
   if (currentRole === 'driver') {
-    return <DriverDashboard />;
+    return <DriverDashboard onBack={handleBackToLanding} />;
   }
   
   if (currentRole === 'customer') {
-    return <CustomerDashboard />;
+    return <CustomerDashboard onBack={handleBackToLanding} />;
   }
 
   return <LandingPage onRoleSelect={handleRoleSelect} />;
