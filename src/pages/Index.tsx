@@ -1,14 +1,33 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { LandingPage } from "./LandingPage";
+import { AdminDashboard } from "./AdminDashboard";
+import { DriverDashboard } from "./DriverDashboard";
+import { CustomerDashboard } from "./CustomerDashboard";
 
 const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
+  const [currentRole, setCurrentRole] = useState<'admin' | 'driver' | 'customer' | null>(null);
+
+  const handleRoleSelect = (role: 'admin' | 'driver' | 'customer') => {
+    setCurrentRole(role);
+  };
+
+  const handleBackToLanding = () => {
+    setCurrentRole(null);
+  };
+
+  if (currentRole === 'admin') {
+    return <AdminDashboard />;
+  }
+  
+  if (currentRole === 'driver') {
+    return <DriverDashboard />;
+  }
+  
+  if (currentRole === 'customer') {
+    return <CustomerDashboard />;
+  }
+
+  return <LandingPage onRoleSelect={handleRoleSelect} />;
 };
 
 export default Index;
