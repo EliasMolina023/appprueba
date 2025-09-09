@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Package, Truck, CheckCircle, AlertCircle, Plus, Filter } from "lucide-react";
+import { Package, Truck, CheckCircle, AlertCircle, Filter } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { PackageCard } from "@/components/dashboard/PackageCard";
+import { AssignPackageModal } from "@/components/dashboard/AssignPackageModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,16 +15,7 @@ interface AdminDashboardProps {
 export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-
-  // Mock data - would come from API/database
-  const stats = {
-    total: 156,
-    inTransit: 45,
-    delivered: 98,
-    pending: 13
-  };
-
-  const packages = [
+  const [packages, setPackages] = useState([
     {
       id: "1",
       trackingNumber: "PKG-2024-001",
@@ -53,7 +45,19 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       lastUpdate: "2024-01-15T08:00:00",
       driverName: "Roberto Silva"
     }
-  ];
+  ]);
+
+  // Calculate stats from current packages
+  const stats = {
+    total: packages.length,
+    inTransit: packages.filter(p => p.status === 'in-transit').length,
+    delivered: packages.filter(p => p.status === 'delivered').length,
+    pending: packages.filter(p => p.status === 'pending').length
+  };
+
+  const handleAssignPackage = (newPackage: any) => {
+    setPackages(prev => [newPackage, ...prev]);
+  };
 
   const filteredPackages = packages.filter(pkg => {
     const matchesSearch = pkg.trackingNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -121,10 +125,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
               <SelectItem value="not-delivered">No Entregados</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="hero" className="sm:w-auto">
-            <Plus className="h-4 w-4 mr-2" />
-            Nuevo Paquete
-          </Button>
+          <AssignPackageModal onAssignPackage={handleAssignPackage} />
         </div>
 
         {/* Packages Grid */}
