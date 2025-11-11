@@ -1,4 +1,4 @@
-import { Package, MapPin, Clock, Camera, FileText } from "lucide-react";
+import { Package, MapPin, Clock, Camera, FileText, Navigation } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ interface PackageCardProps {
   onStatusUpdate?: (packageId: string, status: string) => void;
   onTakePhoto?: (packageId: string) => void;
   onAddNote?: (packageId: string) => void;
+  onStartRoute?: (packageId: string) => void;
 }
 
 const statusMap = {
@@ -32,7 +33,8 @@ export const PackageCard = ({
   userRole, 
   onStatusUpdate, 
   onTakePhoto, 
-  onAddNote 
+  onAddNote,
+  onStartRoute
 }: PackageCardProps) => {
   const statusInfo = statusMap[pkg.status];
 
@@ -84,39 +86,54 @@ export const PackageCard = ({
 
       {userRole === 'driver' && (
         <CardFooter className="pt-3 border-t">
-          <div className="flex flex-wrap gap-2 w-full">
-            <Button
-              size="sm"
-              variant="success"
-              onClick={() => onStatusUpdate?.(pkg.id, 'delivered')}
-              className="flex-1"
-            >
-              Entregar
-            </Button>
-            <Button
-              size="sm"
-              variant="warning"
-              onClick={() => onStatusUpdate?.(pkg.id, 'in-transit')}
-              className="flex-1"
-            >
-              En Ruta
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => onTakePhoto?.(pkg.id)}
-            >
-              <Camera className="h-4 w-4 mr-1" />
-              Foto
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => onAddNote?.(pkg.id)}
-            >
-              <FileText className="h-4 w-4 mr-1" />
-              Nota
-            </Button>
+          <div className="space-y-2 w-full">
+            {pkg.status === 'pending' && (
+              <Button
+                size="sm"
+                variant="hero"
+                onClick={() => onStartRoute?.(pkg.id)}
+                className="w-full"
+              >
+                <Navigation className="h-4 w-4 mr-2" />
+                Iniciar Ruta
+              </Button>
+            )}
+            <div className="flex flex-wrap gap-2 w-full">
+              <Button
+                size="sm"
+                variant="success"
+                onClick={() => onStatusUpdate?.(pkg.id, 'delivered')}
+                className="flex-1"
+              >
+                Entregar
+              </Button>
+              {pkg.status === 'pending' && (
+                <Button
+                  size="sm"
+                  variant="warning"
+                  onClick={() => onStatusUpdate?.(pkg.id, 'in-transit')}
+                  className="flex-1"
+                >
+                  En Ruta
+                </Button>
+              )}
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onTakePhoto?.(pkg.id)}
+              >
+                <Camera className="h-4 w-4 mr-1" />
+                Foto
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onAddNote?.(pkg.id)}
+              >
+                <FileText className="h-4 w-4 mr-1" />
+                Nota
+              </Button>
+            </div>
           </div>
         </CardFooter>
       )}

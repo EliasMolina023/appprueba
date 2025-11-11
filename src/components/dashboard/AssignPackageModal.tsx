@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Package, Plus } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 interface AssignPackageModalProps {
   onAssignPackage: (packageData: any) => void;
@@ -87,14 +87,14 @@ export const AssignPackageModal = ({ onAssignPackage }: AssignPackageModalProps)
       <DialogTrigger asChild>
         <Button variant="hero" className="sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
-          Asignar Paquete
+          Asignar Entrega
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <Package className="h-5 w-5 mr-2" />
-            Asignar Nuevo Paquete
+            Asignar Nueva Entrega
           </DialogTitle>
         </DialogHeader>
         

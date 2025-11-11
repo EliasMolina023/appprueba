@@ -3,8 +3,10 @@ import { Package, Navigation, CheckCircle2, Camera } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { PackageCard } from "@/components/dashboard/PackageCard";
+import { DeliverySummary } from "@/components/dashboard/DeliverySummary";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "@/hooks/use-toast";
 
 interface DriverDashboardProps {
   onBack?: () => void;
@@ -81,6 +83,10 @@ export const DriverDashboard = ({ onBack }: DriverDashboardProps) => {
     });
   };
 
+  const handleStartRoute = (packageId: string) => {
+    handleStatusUpdate(packageId, 'in-transit');
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header userRole="driver" userName="Carlos López" onBack={onBack} showBackButton={!!onBack} />
@@ -126,30 +132,44 @@ export const DriverDashboard = ({ onBack }: DriverDashboardProps) => {
           </Button>
         </div>
 
-        {/* Package Assignment */}
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-4">Paquetes Asignados</h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {packages.map((pkg) => (
-              <PackageCard
-                key={pkg.id}
-                package={pkg}
-                userRole="driver"
-                onStatusUpdate={handleStatusUpdate}
-                onTakePhoto={handleTakePhoto}
-                onAddNote={handleAddNote}
-              />
-            ))}
-          </div>
-        </div>
+        {/* Tabs */}
+        <Tabs defaultValue="packages" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="packages">Mis Entregas</TabsTrigger>
+            <TabsTrigger value="summary">Resumen</TabsTrigger>
+          </TabsList>
 
-        {packages.length === 0 && (
-          <div className="text-center py-12">
-            <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No hay paquetes asignados</h3>
-            <p className="text-muted-foreground">Contacta al administrador para obtener asignaciones</p>
-          </div>
-        )}
+          <TabsContent value="packages">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-4">Paquetes Asignados</h2>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {packages.map((pkg) => (
+                  <PackageCard
+                    key={pkg.id}
+                    package={pkg}
+                    userRole="driver"
+                    onStatusUpdate={handleStatusUpdate}
+                    onTakePhoto={handleTakePhoto}
+                    onAddNote={handleAddNote}
+                    onStartRoute={handleStartRoute}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {packages.length === 0 && (
+              <div className="text-center py-12">
+                <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">No hay paquetes asignados</h3>
+                <p className="text-muted-foreground">Contacta al administrador para obtener asignaciones</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="summary">
+            <DeliverySummary packages={packages} userRole="driver" />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );

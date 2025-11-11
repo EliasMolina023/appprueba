@@ -4,9 +4,13 @@ import { Header } from "@/components/layout/Header";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { PackageCard } from "@/components/dashboard/PackageCard";
 import { AssignPackageModal } from "@/components/dashboard/AssignPackageModal";
-import { Button } from "@/components/ui/button";
+import { AddDriverModal } from "@/components/dashboard/AddDriverModal";
+import { DriversListSection } from "@/components/dashboard/DriversListSection";
+import { DeliverySummary } from "@/components/dashboard/DeliverySummary";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "@/hooks/use-toast";
 
 interface AdminDashboardProps {
   onBack?: () => void;
@@ -15,6 +19,35 @@ interface AdminDashboardProps {
 export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [drivers, setDrivers] = useState([
+    {
+      id: "1",
+      name: "Carlos López",
+      email: "carlos.lopez@example.com",
+      phone: "555-0101",
+      vehicleType: "motorcycle",
+      status: "active",
+      totalDeliveries: 142
+    },
+    {
+      id: "2",
+      name: "María González",
+      email: "maria.gonzalez@example.com",
+      phone: "555-0102",
+      vehicleType: "van",
+      status: "active",
+      totalDeliveries: 98
+    },
+    {
+      id: "3",
+      name: "Roberto Silva",
+      email: "roberto.silva@example.com",
+      phone: "555-0103",
+      vehicleType: "motorcycle",
+      status: "active",
+      totalDeliveries: 156
+    }
+  ]);
   const [packages, setPackages] = useState([
     {
       id: "1",
@@ -57,6 +90,21 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
 
   const handleAssignPackage = (newPackage: any) => {
     setPackages(prev => [newPackage, ...prev]);
+  };
+
+  const handleAddDriver = (newDriver: any) => {
+    setDrivers(prev => [newDriver, ...prev]);
+  };
+
+  const handleDeleteDriver = (driverId: string) => {
+    setDrivers(prev => prev.filter(d => d.id !== driverId));
+  };
+
+  const handleEditDriver = (driverId: string) => {
+    toast({
+      title: "Editar repartidor",
+      description: "Función de edición próximamente disponible",
+    });
   };
 
   const filteredPackages = packages.filter(pkg => {
@@ -103,49 +151,77 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
           />
         </div>
 
-        {/* Actions and Filters */}
+        {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="flex-1">
-            <Input
-              placeholder="Buscar por número de guía o cliente..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-48">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Filtrar por estado" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos los estados</SelectItem>
-              <SelectItem value="pending">Pendientes</SelectItem>
-              <SelectItem value="in-transit">En Tránsito</SelectItem>
-              <SelectItem value="delivered">Entregados</SelectItem>
-              <SelectItem value="not-delivered">No Entregados</SelectItem>
-            </SelectContent>
-          </Select>
           <AssignPackageModal onAssignPackage={handleAssignPackage} />
+          <AddDriverModal onAddDriver={handleAddDriver} />
         </div>
 
-        {/* Packages Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredPackages.map((pkg) => (
-            <PackageCard
-              key={pkg.id}
-              package={pkg}
-              userRole="admin"
+        {/* Tabs for different sections */}
+        <Tabs defaultValue="packages" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsTrigger value="packages">Paquetes</TabsTrigger>
+            <TabsTrigger value="drivers">Repartidores</TabsTrigger>
+            <TabsTrigger value="summary">Resumen</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="packages" className="space-y-4">
+            {/* Filters */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <div className="flex-1">
+                <Input
+                  placeholder="Buscar por número de guía o cliente..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full sm:w-48">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Filtrar por estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos los estados</SelectItem>
+                  <SelectItem value="pending">Pendientes</SelectItem>
+                  <SelectItem value="in-transit">En Tránsito</SelectItem>
+                  <SelectItem value="delivered">Entregados</SelectItem>
+                  <SelectItem value="not-delivered">No Entregados</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Packages Grid */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {filteredPackages.map((pkg) => (
+                <PackageCard
+                  key={pkg.id}
+                  package={pkg}
+                  userRole="admin"
+                />
+              ))}
+            </div>
+
+            {filteredPackages.length === 0 && (
+              <div className="text-center py-12">
+                <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">No se encontraron paquetes</h3>
+                <p className="text-muted-foreground">Intenta ajustar tus filtros de búsqueda</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="drivers">
+            <DriversListSection 
+              drivers={drivers}
+              onDeleteDriver={handleDeleteDriver}
+              onEditDriver={handleEditDriver}
             />
-          ))}
-        </div>
+          </TabsContent>
 
-        {filteredPackages.length === 0 && (
-          <div className="text-center py-12">
-            <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No se encontraron paquetes</h3>
-            <p className="text-muted-foreground">Intenta ajustar tus filtros de búsqueda</p>
-          </div>
-        )}
+          <TabsContent value="summary">
+            <DeliverySummary packages={packages} userRole="admin" />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
